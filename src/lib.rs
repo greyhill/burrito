@@ -5,6 +5,7 @@ use std::slice;
 use std::convert::{From, Into};
 use std::mem::transmute;
 use std::iter::repeat;
+use std::ffi::CString;
 
 #[macro_export]
 macro_rules! mex_entry {
@@ -306,6 +307,14 @@ extern { }
 #[link(name = "mat")]
 extern { }
 
+pub fn mex_println<T: Into<Vec<u8>>>(s: T) -> () {
+    let first_arg = CString::new("%s").unwrap();
+    let message = CString::new(s).unwrap();
+    unsafe {
+        mexPrintf(first_arg.as_ptr(), message.as_ptr());
+    }
+}
+
 extern {
     // type checks
     fn mxGetClassID(ptr: *const c_void) -> i32;
@@ -325,5 +334,8 @@ extern {
     fn mxGetData(ptr: *const c_void) -> *mut c_void;
     fn mxGetImagData(ptr: *const c_void) -> *mut c_void;
     fn mxGetString(ptr: *const c_void, s: *mut char, strlen: MwSize) -> i32;
+
+    // matlab text output
+    fn mexPrintf(msg: *const c_char, ...);
 }
 
