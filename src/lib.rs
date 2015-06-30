@@ -163,17 +163,21 @@ impl Array {
         }
     }
 
-    pub fn as_string(self: &Self) -> String {
-        let dims = self.get_dimensions();
-        let numel = dims.iter().fold(1usize, |l,r| l*r);
-        let mut buf: Vec<u8> = repeat(0u8).take(numel+1).collect();
-        unsafe {
-            mxGetString(self.ptr, 
-                        transmute(buf.as_mut_ptr()),
-                        numel as MwSize + 1);
+    pub fn as_string(self: &Self) -> Option<String> {
+        if let MxClassID::Char = self.get_class() {
+            let dims = self.get_dimensions();
+            let numel = dims.iter().fold(1usize, |l,r| l*r);
+            let mut buf: Vec<u8> = repeat(0u8).take(numel+1).collect();
+            unsafe {
+                mxGetString(self.ptr, 
+                            transmute(buf.as_mut_ptr()),
+                            numel as MwSize + 1);
+            }
+            buf.pop(); // remove trailing \0
+            Some(String::from_utf8(buf).ok().unwrap())
+        } else {
+            None
         }
-        buf.pop(); // remove trailing \0
-        String::from_utf8(buf).ok().unwrap()
     }
 }
 
