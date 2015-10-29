@@ -227,7 +227,7 @@ pub enum Data<'a> {
 pub type MwSize = u32;
 
 #[cfg(matlab)]
-pub type MwSize = usize;
+pub type MwSize = size_t;
 
 #[derive(Debug, Copy, Clone)]
 pub enum MxClassID {

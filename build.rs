@@ -12,6 +12,20 @@ fn get_path() -> Option<String> {
     None
 }
 
+fn get_matlab_path(ml_output: &str) -> Option<&str> {
+    for line in ml_output.split("\n") {
+        let mut it = line.split("=");
+        match (it.next(), it.next()) {
+            (Some("MATLAB"), Some(p)) => {
+                return Some(p)
+            },
+            _ => {
+            },
+        }
+    }
+    None
+}
+
 fn main() {
     let mut matched = false;
 
@@ -50,8 +64,24 @@ fn main() {
                 }
             }
 
-            // look for matlab-config
-            // TODO
+            if matched  {
+                break;
+            }
+
+            // look for matlab
+            let mut matlab_path = PathBuf::from(path_item);
+            matlab_path.push("matlab");
+            if let Ok(_) = metadata(&matlab_path) {
+                if let Ok(output) = Command::new(&matlab_path).arg("-e").output() {
+                    if let Ok(txt) = String::from_utf8(output.stdout) {
+                        if let Some(p) = get_matlab_path(&txt) {
+                            println!("cargo:rustc-link-search={}", p);
+                            println!("cargo:rustc-cfg=matlab");
+                            matched = true;
+                        }
+                    }
+                }
+            }
         }
     }
 
