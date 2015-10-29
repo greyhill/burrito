@@ -337,7 +337,7 @@ extern {
     // data extractors
     fn mxGetData(ptr: *const c_void) -> *mut c_void;
     fn mxGetImagData(ptr: *const c_void) -> *mut c_void;
-    fn mxGetString(ptr: *const c_void, s: *mut char, strlen: MwSize) -> i32;
+    fn mxGetString(ptr: *const c_void, s: *mut c_char, strlen: MwSize) -> i32;
 
     // matlab text output
     fn mexPrintf(msg: *const c_char, ...);
