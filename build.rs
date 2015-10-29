@@ -1,8 +1,7 @@
 use std::env;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::fs::metadata;
 use std::process::Command;
-use std::io::Read;
 
 fn get_path() -> Option<String> {
     for (key, val) in env::vars() {
