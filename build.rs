@@ -16,7 +16,7 @@ fn get_matlab_path(ml_output: &str) -> Option<&str> {
     for line in ml_output.split("\n") {
         let mut it = line.split("=");
         match (it.next(), it.next()) {
-            (Some("LD_LIBRARY_PATH"), Some(p)) => {
+            (Some("MATLAB"), Some(p)) => {
                 return Some(p)
             },
             _ => {
@@ -75,7 +75,7 @@ fn main() {
                 if let Ok(output) = Command::new(&matlab_path).arg("-e").output() {
                     if let Ok(txt) = String::from_utf8(output.stdout) {
                         if let Some(p) = get_matlab_path(&txt) {
-                            println!("cargo:rustc-link-search={}", p);
+                            println!("cargo:rustc-link-search={}/bin/glnxa64/", p);
                             println!("cargo:rustc-cfg=matlab");
                             matched = true;
                         }
