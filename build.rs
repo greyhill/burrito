@@ -16,7 +16,7 @@ fn get_matlab_path(ml_output: &str) -> Option<&str> {
     for line in ml_output.split("\n") {
         let mut it = line.split("=");
         match (it.next(), it.next()) {
-            (Some("MATLAB"), Some(p)) => {
+            (Some("LD_LIBRARY_PATH"), Some(p)) => {
                 return Some(p)
             },
             _ => {
